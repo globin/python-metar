@@ -730,3 +730,12 @@ def test_present_weather_others():
     code = "VEIM 301200Z 16007KT 7000 NSW SCT018 31/27 Q1007 NOSIG"
     m = Metar.Metar(code, month=8, year=2023)
     assert m.present_weather() == 'no significant weather'
+
+
+def test_unknown_color():
+    """
+    Test parsing of a METAR that includes an unknown color
+    """
+    code = "ETSI 262120Z AUTO 19001KT 0050 // ////// 12/12 Q1022 ///"
+    Metar.Metar(code, month=9, year=2023)
+

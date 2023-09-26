@@ -104,8 +104,8 @@ RECENT_RE = re.compile(
 )
 WINDSHEAR_RE = re.compile(r"^(WS\s+)?(ALL\s+RWY|R(WY)?(?P<name>\d\d(RR?|L?|C)?))\s+")
 COLOR_RE = re.compile(
-    r"""^(BLACK)?(BLU|GRN|WHT|RED)\+?
-                        (/?(BLACK)?(BLU|GRN|WHT|RED)\+?)*\s*""",
+    r"""^(BLACK)?(BLU|GRN|WHT|RED|///)\+?
+                        (/?(BLACK)?(BLU|GRN|WHT|RED|///)\+?)*\s*""",
     re.VERBOSE,
 )
 RUNWAYSTATE_RE = re.compile(
