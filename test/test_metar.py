@@ -739,3 +739,12 @@ def test_unknown_color():
     code = "ETSI 262120Z AUTO 19001KT 0050 // ////// 12/12 Q1022 ///"
     Metar.Metar(code, month=9, year=2023)
 
+
+def test_rvr_trend():
+    """Check trend on runway visual range."""
+    report = Metar.Metar(
+        "EDDM 262120Z AUTO 21002KT 3600 0600 R08L/P2000N R08R/0650D BCFG NSC 10/10 Q1023 BECMG 2000 BCFG"
+    )
+    res = report.runway_visual_range()
+    assert res == "on runway 08L, greater than 2000 meters, no change; on runway 08R, 650 meters, decreasing"
+

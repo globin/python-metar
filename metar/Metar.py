@@ -66,7 +66,7 @@ RUNWAY_RE = re.compile(
         R(?P<name>\d\d(RR?|LL?|C)?)/
         (?P<low>(M|P)?(\d\d\d\d|/{4}))
         (V(?P<high>(M|P)?\d\d\d\d))?
-        (?P<unit>FT)?[/NDU]*)\s+""",
+        (?P<unit>FT)?(?P<rvr_trend>[/NDU]*))\s+""",
     re.VERBOSE,
 )
 WEATHER_RE = re.compile(
@@ -689,6 +689,7 @@ class Metar(object):
             . low   [distance]
             . high  [distance]
             . unit  [string]
+            . trend [string]
         """
         if d["name"] is None:
             return
@@ -701,7 +702,7 @@ class Metar(object):
             high = low
         else:
             high = distance(d["high"], unit)
-        self.runway.append([d["name"], low, high, unit])
+        self.runway.append([d["name"], low, high, unit, d["rvr_trend"]])
 
     def _handleWeather(self, d):
         """
@@ -1264,15 +1265,20 @@ class Metar(object):
         Return a textual description of the runway visual range.
         """
         lines = []
-        for name, low, high, unit in self.runway:
+        for name, low, high, unit, trend in self.runway:
             reportunits = unit if units is None else units
+            trend = (
+                ", %s" % {"N": "no change", "U": "increasing", "D": "decreasing"}[trend]
+                if trend
+                else ""
+            )
             if low != high:
                 lines.append(
-                    ("on runway %s, from %d to %s")
-                    % (name, low.value(reportunits), high.string(reportunits))
+                    ("on runway %s, from %d to %s%s")
+                    % (name, low.value(reportunits), high.string(reportunits), trend)
                 )
             else:
-                lines.append("on runway %s, %s" % (name, low.string(reportunits)))
+                lines.append("on runway %s, %s%s" % (name, low.string(reportunits), trend))
         return "; ".join(lines)
 
     def present_weather(self):
